@@ -2,16 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IndieSearch</title>
+<title>Indie Search</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>IndieSearch</h1>
-<p>search the indie web!</p>
-<input type="text" id="search" placeholder="my site...">
+<header style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Indie Search</h1>
+  <button id="showFormBtn">Submit Your Site</button>
+</header>
+
+<div id="submitFormDiv" class="hidden">
+  <h3>submit your site</h3>
+  <input type="url" id="siteURL" placeholder="site URL" required>
+  <input type="text" id="siteDesc" placeholder="description (optional)">
+  <p>we will review your site and get it indexed soon enough!</p>
+  <button id="submitBtn">submit</button>
+  <button id="cancelBtn">cancel</button>
+  <p id="submitMsg"></p>
+</div>
+
+<input type="text" id="search" placeholder="Search indie sites...">
 <ul id="results"></ul>
 
+<script src="submit.js"></script>
 <script>
 const searchInput = document.getElementById('search');
 const resultsList = document.getElementById('results');
@@ -28,13 +42,13 @@ searchInput.addEventListener('input', () => {
   const results = index
     .map(item => ({
       ...item,
-      matchScore: (item.title.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)) ? 1 : 0
+      matchScore: (item.title?.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)) ? 1 : 0
     }))
     .sort((a,b) => b.matchScore - a.matchScore || new Date(b.lastScraped) - new Date(a.lastScraped));
 
   results.forEach(item => {
     const li = document.createElement('li');
-    li.innerHTML = `<a href="${item.url}" target="_blank">${item.title}</a> — ${item.description}`;
+    li.innerHTML = `<a href="${item.url}" target="_blank">${item.title || item.url}</a> — ${item.description}`;
     resultsList.appendChild(li);
   });
 });
