@@ -6,53 +6,22 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header style="display:flex; justify-content:space-between; align-items:center;">
-  <h1>indiesearch</h1>
-  <button id="showFormBtn">submit your site</button>
-</header>
-
-<div id="submitFormDiv" class="hidden">
-  <h3>submit your site</h3>
-  <input type="url" id="siteURL" placeholder="URL" required>
-  <input type="text" id="siteDesc" placeholder="description (optional)">
-  <p>we'll review it and get it indexed soon enough</p>
-  <button id="submitBtn">submit</button>
-  <button id="cancelBtn">cancel</button>
-  <p id="submitMsg"></p>
+<div class="container">
+    <h1>indiesearch</h1>
+    <input type="text" id="searchInput" placeholder="search...">
+    <br>
+    <button onclick="doSearch()">search</button>
+    <br><br>
+    <a href="submit.html">submit your site</a>
 </div>
 
-<input type="text" id="search" placeholder="search...">
-<ul id="results"></ul>
-
-<script src="submit.js"></script>
 <script>
-const searchInput = document.getElementById('search');
-const resultsList = document.getElementById('results');
-let index = [];
-
-fetch('/index.json')
-  .then(res => res.json())
-  .then(data => index = data);
-
-searchInput.addEventListener('input', () => {
-  const query = searchInput.value.toLowerCase();
-  resultsList.innerHTML = '';
-
-  const results = index
-    .map(item => ({
-      ...item,
-      matchScore: (item.title?.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)) ? 1 : 0
-    }))
-    .sort((a,b) => b.matchScore - a.matchScore || new Date(b.lastScraped) - new Date(a.lastScraped));
-
-  results.forEach(item => {
-    const li = document.createElement('li');
-    li.innerHTML = `<a href="${item.url}" target="_blank">${item.title || item.url}</a> — ${item.description}`;
-    resultsList.appendChild(li);
-  });
-});
+function doSearch() {
+    const query = document.getElementById('searchInput').value.trim();
+    if(query) {
+        window.location.href = '/search?q=' + encodeURIComponent(query);
+    }
+}
 </script>
-
 </body>
 </html>
