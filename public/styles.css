@@ -1,0 +1,8 @@
+body { font-family: sans-serif; padding: 2rem; background: #f9f9f9; }
+input, button { padding: 0.5rem; margin: 0.5rem 0; }
+ul { list-style: none; padding: 0; }
+li { margin: 0.5rem 0; }
+button { cursor: pointer; }
+.hidden { display: none; }
+a { text-decoration: none; color: #333; }
+a:hover { text-decoration: underline; }
