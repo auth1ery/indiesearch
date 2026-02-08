@@ -2,27 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Indie Search</title>
+<title>indiesearch</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header style="display:flex; justify-content:space-between; align-items:center;">
-  <h1>Indie Search</h1>
-  <button id="showFormBtn">Submit Your Site</button>
+  <h1>indiesearch</h1>
+  <button id="showFormBtn">submit your site</button>
 </header>
 
 <div id="submitFormDiv" class="hidden">
   <h3>submit your site</h3>
-  <input type="url" id="siteURL" placeholder="site URL" required>
+  <input type="url" id="siteURL" placeholder="URL" required>
   <input type="text" id="siteDesc" placeholder="description (optional)">
-  <p>we will review your site and get it indexed soon enough!</p>
+  <p>we'll review it and get it indexed soon enough</p>
   <button id="submitBtn">submit</button>
   <button id="cancelBtn">cancel</button>
   <p id="submitMsg"></p>
 </div>
 
-<input type="text" id="search" placeholder="Search indie sites...">
+<input type="text" id="search" placeholder="search...">
 <ul id="results"></ul>
 
 <script src="submit.js"></script>
