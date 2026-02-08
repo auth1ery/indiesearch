@@ -6,10 +6,7 @@ const siteURL = document.getElementById('siteURL');
 const siteDesc = document.getElementById('siteDesc');
 const submitMsg = document.getElementById('submitMsg');
 
-showFormBtn.addEventListener('click', () => {
-  submitFormDiv.classList.remove('hidden');
-});
-
+showFormBtn.addEventListener('click', () => submitFormDiv.classList.remove('hidden'));
 cancelBtn.addEventListener('click', () => {
   submitFormDiv.classList.add('hidden');
   submitMsg.textContent = '';
@@ -20,11 +17,7 @@ cancelBtn.addEventListener('click', () => {
 submitBtn.addEventListener('click', async () => {
   const url = siteURL.value.trim();
   const description = siteDesc.value.trim();
-
-  if (!url) {
-    submitMsg.textContent = 'URL is required!';
-    return;
-  }
+  if (!url) return submitMsg.textContent = 'URL required!!!';
 
   const res = await fetch('/submit', {
     method: 'POST',
@@ -35,7 +28,7 @@ submitBtn.addEventListener('click', async () => {
   const data = await res.json();
   if (data.success) {
     submitMsg.style.color = 'green';
-    submitMsg.textContent = 'aubmission sent! awaiting review.';
+    submitMsg.textContent = 'submission sent!! awaiting review.';
     siteURL.value = '';
     siteDesc.value = '';
   } else {
