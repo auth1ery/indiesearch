@@ -6,10 +6,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 app.use(express.json());
-
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 const DB_KEY = process.env.DB_KEY;
+
+app.post('/submit', (req, res) => {
+  const { url, description } = req.body;
+  if (!url) return res.json({ success: false });
+
+  const pending = JSON.parse(fs.readFileSync('pending.json'));
+  pending.push({ url, description, submittedAt: new Date().toISOString() });
+  fs.writeFileSync('pending.json', JSON.stringify(pending, null, 2));
+  res.json({ success: true });
+});
 
 app.post('/admin/login', (req, res) => {
   const { password } = req.body;
@@ -25,13 +34,11 @@ app.post('/approve/:i', (req, res) => {
   const pending = JSON.parse(fs.readFileSync('pending.json'));
   const index = JSON.parse(fs.readFileSync('index.json'));
   const item = pending.splice(req.params.i, 1)[0];
-
   if (item) {
     index.push({ ...item, lastScraped: new Date().toISOString() });
     fs.writeFileSync('index.json', JSON.stringify(index, null, 2));
     fs.writeFileSync('pending.json', JSON.stringify(pending, null, 2));
   }
-
   res.json({ success: true });
 });
 
