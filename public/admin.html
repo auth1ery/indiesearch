@@ -2,24 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>admin</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h1>admin panel</h1>
-
-<div id="loginDiv">
-  <input type="password" id="password" placeholder="Enter password">
-  <button id="loginBtn">login</button>
-  <p id="loginMsg" style="color:red;"></p>
+<div class="container">
+    <h1>admin panel</h1>
+    
+    <div id="loginDiv">
+        <input type="password" id="password" placeholder="enter password">
+        <button id="loginBtn">login</button>
+        <p id="loginMsg"></p>
+    </div>
+    
+    <div id="panel" class="hidden">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('pending')">pending submissions</button>
+            <button class="tab" onclick="showTab('indexed')">indexed sites</button>
+        </div>
+        
+        <div id="pendingTab">
+            <ul id="pendingList"></ul>
+        </div>
+        
+        <div id="indexedTab" class="hidden">
+            <ul id="indexedList"></ul>
+        </div>
+        
+        <br>
+        <a href="/">back to search</a>
+    </div>
 </div>
-
-<div id="panel" class="hidden">
-  <h2>pending submissions</h2>
-  <ul id="pendingList"></ul>
-</div>
-
 <script src="admin.js"></script>
 </body>
 </html>
