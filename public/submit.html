@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>submit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>submit your site</h1>
+    <input type="url" id="siteURL" placeholder="Site URL" required>
+    <input type="text" id="siteDesc" placeholder="Description (optional)">
+    <br>
+    <button id="submitBtn">submit</button>
+    <p id="msg"></p>
+    <br>
+    <a href="/">back to search</a>
+</div>
+
+<script>
+const submitBtn = document.getElementById('submitBtn');
+const siteURL = document.getElementById('siteURL');
+const siteDesc = document.getElementById('siteDesc');
+const msg = document.getElementById('msg');
+
+submitBtn.addEventListener('click', async () => {
+    if(!siteURL.value.trim()) { msg.textContent = 'URL required!! dont give me nothin'; return; }
+
+    const res = await fetch('/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: siteURL.value.trim(), description: siteDesc.value.trim() })
+    });
+    const data = await res.json();
+    if(data.success) {
+        msg.style.color = 'green';
+        msg.textContent = 'submission sent!!! awaiting review.';
+        siteURL.value = '';
+        siteDesc.value = '';
+    } else {
+        msg.style.color = 'red';
+        msg.textContent = 'something went wrong';
+    }
+});
+</script>
+</body>
+</html>
