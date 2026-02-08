@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>results</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>search results</h1>
+    <ul id="results"></ul>
+    <br>
+    <a href="/">back to search</a>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const query = params.get('q')?.toLowerCase() || '';
+
+fetch('/index.json')
+.then(res => res.json())
+.then(data => {
+    const results = data
+        .map(item => ({
+            ...item,
+            score: (item.title.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)) ? 1 : 0
+        }))
+        .sort((a,b) => b.score - a.score || new Date(b.lastScraped) - new Date(a.lastScraped));
+
+    const resultsList = document.getElementById('results');
+    if(results.length === 0) {
+        resultsList.innerHTML = '<li>oh no! no results found. (maybe submit your site to make this more complete?)</li>';
+    } else {
+        results.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="${item.url}" target="_blank">${item.title || item.url}</a> — ${item.description}`;
+            resultsList.appendChild(li);
+        });
+    }
+});
+</script>
+</body>
+</html>
