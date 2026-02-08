@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>submit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>submit your site</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
     <h1>submit your site</h1>
-    <input type="url" id="siteURL" placeholder="Site URL" required>
-    <input type="text" id="siteDesc" placeholder="Description (optional)">
+    <input type="url" id="siteURL" placeholder="site URL" required>
+    <input type="text" id="siteDesc" placeholder="description (optional)">
     <br>
     <button id="submitBtn">submit</button>
     <p id="msg"></p>
     <br>
-    <a href="/">back to search</a>
+    <a href="/">← back to search</a>
 </div>
-
 <script>
 const submitBtn = document.getElementById('submitBtn');
 const siteURL = document.getElementById('siteURL');
@@ -24,14 +24,25 @@ const siteDesc = document.getElementById('siteDesc');
 const msg = document.getElementById('msg');
 
 submitBtn.addEventListener('click', async () => {
-    if(!siteURL.value.trim()) { msg.textContent = 'URL required!! dont give me nothin'; return; }
-
+    const url = siteURL.value.trim();
+    const description = siteDesc.value.trim();
+    
+    if(!url) { 
+        msg.style.color = 'red';
+        msg.textContent = 'URL required!! dont give me nothin'; 
+        return; 
+    }
+    
+    msg.style.color = '#666';
+    msg.textContent = 'checking...';
+    
     const res = await fetch('/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: siteURL.value.trim(), description: siteDesc.value.trim() })
+        body: JSON.stringify({ url, description })
     });
     const data = await res.json();
+    
     if(data.success) {
         msg.style.color = 'green';
         msg.textContent = 'submission sent!!! awaiting review.';
@@ -39,7 +50,7 @@ submitBtn.addEventListener('click', async () => {
         siteDesc.value = '';
     } else {
         msg.style.color = 'red';
-        msg.textContent = 'something went wrong';
+        msg.textContent = data.error || 'something went wrong';
     }
 });
 </script>
