@@ -2,6 +2,8 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
+import axios from 'axios';
+import cheerio from 'cheerio';
 
 dotenv.config();
 const app = express();
@@ -9,6 +11,19 @@ app.use(express.json());
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 const DB_KEY = process.env.DB_KEY;
+
+const scrapeSite = async (url) => {
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+    const title = $('title').text() || url;
+    const description = $('meta[name="description"]').attr('content') || '';
+    return { title, url, description, lastScraped: new Date().toISOString() };
+  } catch (err) {
+    console.error(`Failed to scrape ${url}:`, err.message);
+    return { title: url, url, description: '', lastScraped: new Date().toISOString() };
+  }
+};
 
 app.post('/submit', (req, res) => {
   const { url, description } = req.body;
@@ -30,15 +45,18 @@ app.get('/pending.json', (req, res) => {
   res.sendFile(path.resolve('pending.json'));
 });
 
-app.post('/approve/:i', (req, res) => {
+app.post('/approve/:i', async (req, res) => {
   const pending = JSON.parse(fs.readFileSync('pending.json'));
   const index = JSON.parse(fs.readFileSync('index.json'));
   const item = pending.splice(req.params.i, 1)[0];
+
   if (item) {
-    index.push({ ...item, lastScraped: new Date().toISOString() });
+    const scraped = await scrapeSite(item.url);
+    index.push(scraped);
     fs.writeFileSync('index.json', JSON.stringify(index, null, 2));
     fs.writeFileSync('pending.json', JSON.stringify(pending, null, 2));
   }
+
   res.json({ success: true });
 });
 
@@ -50,4 +68,4 @@ app.post('/deny/:i', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
